@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class Application {//implements CommandLineRunner {
     public static void main(String[] args) {
-    	System.out.println("Hello World!!");
         SpringApplication.run(Application.class, args);
     }
     
