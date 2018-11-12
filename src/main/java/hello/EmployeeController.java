@@ -2,6 +2,7 @@ package hello;
 
 import java.util.List;
 
+import org.springframework.hateoas.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RestController
 public class EmployeeController {
@@ -26,10 +29,17 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/employees/{id}")
-	Employee one(@PathVariable(name="id") Long id) {
-		return repository.findById(id).orElseThrow(
+	Resource<Employee> one(@PathVariable(name="id") Long id) {
+		Employee employee  = repository.findById(id).orElseThrow(
 					() -> new EmployeeController.EmployeeNotFoundException(id)
 				);
+		
+		//
+		//
+		// hateoas
+		return new Resource<Employee>(employee,
+				linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
+				linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
 	}
 
 	@RequestMapping(path= "/employees", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
